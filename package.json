@@ -1,0 +1,17 @@
+{
+    "name": "othello-game",
+    "version": "1.0.0",
+    "description": "Multiplayer Othello game with AI",
+    "scripts": {
+        "build": "cd server && npm install && npm run build && cd ../client && npm install && npm run build",
+        "start": "cd server && npm start"
+    },
+    "keywords": [
+        "othello",
+        "game",
+        "multiplayer",
+        "socketio"
+    ],
+    "author": "CJ Kim",
+    "license": "MIT"
+}
