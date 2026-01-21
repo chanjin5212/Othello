@@ -22,9 +22,6 @@ function App() {
 
   const { isConnected, joinGame, playerReady, makeMove, on, off } = useSocket();
 
-  // ... (AI 및 소켓 로직은 기존과 동일하므로 생략하지 않고 유지해야 하지만, 
-  // write_to_file은 전체 파일을 덮어쓰므로 기존 로직을 포함하여 작성합니다)
-
   useEffect(() => {
     if (gameMode === 'ai' && gameState && !gameState.gameOver && appState === 'playing') {
       const aiColor: PlayerColor = opponent?.color || 'white';
@@ -177,7 +174,6 @@ function App() {
     } catch (error) { console.error(error); }
   };
 
-  // ... (makeLocalMove, countPieces, getNextPlayer, checkLocalGameOver functions - keep same logic)
   const makeLocalMove = (board: CellState[][], row: number, col: number, playerColor: PlayerColor): CellState[][] => {
     const newBoard = board.map(r => [...r]);
     newBoard[row][col] = playerColor;
@@ -202,7 +198,8 @@ function App() {
 
   const countPieces = (board: CellState[][]) => {
     let black = 0, white = 0;
-    board.forEach(row => row.forEach(cell => { if (cell === 'black') black++; if (cell === 'white') white++; }));
+    black = board.flat().filter(c => c === 'black').length;
+    white = board.flat().filter(c => c === 'white').length;
     return { black, white };
   };
 
@@ -242,9 +239,9 @@ function App() {
     const isOpeningMode = isManualOpening && gameState.currentTurn === opponent.color && (gameState.blackCount + gameState.whiteCount === 4);
 
     return (
-      <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-between safe-area-padding">
-        {/* 상단: 상대방 정보 */}
-        <div className="w-full max-w-lg px-4 pt-4 pb-2">
+      <div className="h-[100dvh] w-full bg-slate-900 flex flex-col items-center safe-area-padding overflow-hidden">
+        {/* Opponent Info */}
+        <div className="w-full max-w-lg px-4 pt-2 pb-1 flex-none z-10">
           <PlayerInfo
             isOpponent={true}
             player={opponent}
@@ -253,28 +250,32 @@ function App() {
           />
         </div>
 
-        {/* 중앙: 게임 보드 */}
-        <div className="flex-1 flex flex-col items-center justify-center w-full px-2 max-w-lg">
+        {/* Game Board Area: Takes all available space, board scales to fit */}
+        <div className="flex-1 w-full flex flex-col items-center justify-center min-h-0 px-2 relative">
           {isOpeningMode && (
-            <div className="mb-2 px-4 py-1 bg-yellow-500/20 text-yellow-300 text-sm font-bold rounded-full animate-pulse text-center">
+            <div className="absolute top-2 z-20 px-4 py-1 bg-yellow-500/90 text-yellow-50 text-sm font-bold rounded-full animate-pulse shadow-lg backdrop-blur-sm pointer-events-none">
               ✨ AI의 첫 수를 대신 두세요!
             </div>
           )}
-          <div className="w-full aspect-square relative">
-            <GameBoard
-              gameState={gameState}
-              player={player}
-              onMove={handleMove}
-              isManualOpening={isOpeningMode}
-            />
-          </div>
-          <div className="mt-4 text-gray-500 text-xs text-center font-mono">
-            {gameMode === 'ai' ? `AI Difficulty: ${aiDifficulty.toUpperCase()}` : 'MULTIPLAYER MODE'}
+
+          <div className="relative w-full h-full max-w-lg flex items-center justify-center">
+            {/* aspect-square ensures it stays square, max-h-full/max-w-full ensures it fits in container */}
+            <div className="aspect-square w-full h-auto max-h-full max-w-full shadow-2xl rounded-lg">
+              <GameBoard
+                gameState={gameState}
+                player={player}
+                onMove={handleMove}
+                isManualOpening={isOpeningMode}
+              />
+            </div>
           </div>
         </div>
 
-        {/* 하단: 내 정보 */}
-        <div className="w-full max-w-lg px-4 pt-2 pb-6">
+        {/* Player Info */}
+        <div className="w-full max-w-lg px-4 pt-1 pb-4 flex-none z-10">
+          <div className="text-gray-500 text-[10px] text-center mb-1 font-mono uppercase tracking-widest opacity-50">
+            {gameMode === 'ai' ? `AI: ${aiDifficulty}` : 'Multiplayer'}
+          </div>
           <PlayerInfo
             isOpponent={false}
             player={player}
