@@ -112,8 +112,6 @@ function evaluateBoard(board: CellState[][], aiColor: PlayerColor): number {
 
     let aiPieces = 0;
     let opPieces = 0;
-    let aiFrontier = 0;
-    let opFrontier = 0;
 
     for (let r = 0; r < 8; r++) {
         for (let c = 0; c < 8; c++) {
