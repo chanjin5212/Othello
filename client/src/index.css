@@ -21,6 +21,7 @@
   color-scheme: dark;
   color: rgba(255, 255, 255, 0.87);
   background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  background-attachment: fixed;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -30,77 +31,100 @@
 
 body {
   margin: 0;
-  min-height: 100vh;
   display: flex;
   place-items: center;
-}
-
-#root {
-  width: 100%;
+  min-width: 320px;
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
+/* Mobile Safe Area Utilities */
+.safe-area-padding {
+  padding-top: env(safe-area-inset-top, 20px);
+  padding-bottom: env(safe-area-inset-bottom, 20px);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+/* Custom Components */
 .btn-primary {
-  background: linear-gradient(to right, var(--color-primary-500), var(--color-primary-600));
-  color: white;
-  font-weight: 600;
-  padding: 0.75rem 2rem;
-  border-radius: 0.75rem;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-  transition: all 0.2s ease-in-out;
+  @apply bg-gradient-to-r from-primary-600 to-primary-500 hover:from-primary-500 hover:to-primary-400 text-white font-bold py-3 px-6 rounded-lg shadow-lg transform transition-all active:scale-95 focus:outline-none focus:ring-2 focus:ring-primary-400/50;
 }
 
-.btn-primary:hover {
-  background: linear-gradient(to right, var(--color-primary-600), var(--color-primary-700));
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-  transform: scale(1.05);
-}
-
+/* Fixed: Removed bg-opacity-80, used slash syntax for opacity */
 .card {
-  background: rgba(30, 41, 59, 0.5);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(71, 85, 105, 0.5);
-  border-radius: 1rem;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  @apply bg-slate-800/80 rounded-2xl shadow-xl border border-slate-700 backdrop-blur-sm;
 }
 
-.game-cell {
-  aspect-ratio: 1;
-  background: linear-gradient(to bottom right, #15803d, #166534);
-  border: 2px solid #14532d;
-  border-radius: 0.5rem;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  overflow: hidden;
+/* Animations */
+@keyframes flip {
+  0% {
+    transform: rotateY(0deg) scale(1);
+  }
+
+  50% {
+    transform: rotateY(90deg) scale(1.2);
+  }
+
+  100% {
+    transform: rotateY(180deg) scale(1);
+  }
 }
 
-.game-cell:hover {
-  background: linear-gradient(to bottom right, #16a34a, #15803d);
+@keyframes pop {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+
+  70% {
+    transform: scale(1.1);
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
-.game-cell.valid-move {
-  box-shadow: 0 0 0 2px rgba(250, 204, 21, 0.5);
-  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+.animate-flip {
+  animation: flip 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 .game-piece {
-  width: 85%;
-  height: 85%;
-  border-radius: 50%;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s;
+  @apply rounded-full shadow-lg transition-all duration-300;
+  animation: pop 0.3s ease-out backwards;
 }
 
 .game-piece.black {
-  background: linear-gradient(to bottom right, #1f2937, #000000);
-  border: 2px solid #111827;
+  @apply bg-gradient-to-br from-gray-800 to-black;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5), inset 2px 2px 4px rgba(255, 255, 255, 0.1);
 }
 
 .game-piece.white {
-  background: linear-gradient(to bottom right, #f3f4f6, #ffffff);
-  border: 2px solid #d1d5db;
+  @apply bg-gradient-to-br from-white to-gray-200;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3), inset -2px -2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Valid Move Hint */
+.valid-move::after {
+  content: '';
+  @apply absolute w-3 h-3 bg-primary-500 rounded-full opacity-50 block;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: pulse 2s infinite;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-slate-900;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-slate-700 rounded hover:bg-slate-600;
 }
