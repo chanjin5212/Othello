@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: othello-game
+    env: node
+    region: oregon
+    buildCommand: |
+      # 서버 빌드
+      cd server
+      npm install
+      npm run build
+      # 클라이언트 빌드
+      cd ../client
+      npm install
+      npm run build
+      # 빌드된 클라이언트를 서버로 복사
+      mkdir -p ../server/dist/public
+      cp -r dist/* ../server/dist/public/
+    startCommand: cd server && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+    healthCheckPath: /health
