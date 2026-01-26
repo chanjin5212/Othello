@@ -18,6 +18,19 @@ export function createInitialBoard(): CellState[][] {
     board[4][3] = 'black';
     board[4][4] = 'white';
 
+    // Place 5 random walls
+    let wallsPlaced = 0;
+    while (wallsPlaced < 5) {
+        const r = Math.floor(Math.random() * BOARD_SIZE);
+        const c = Math.floor(Math.random() * BOARD_SIZE);
+
+        // Check if the cell is empty (not one of the initial 4 pieces and not already a wall)
+        if (board[r][c] === 'empty') {
+            board[r][c] = 'wall';
+            wallsPlaced++;
+        }
+    }
+
     return board;
 }
 
@@ -54,7 +67,7 @@ export function isValidMove(
     col: number,
     player: PlayerColor
 ): boolean {
-    if (board[row][col] !== 'empty') return false;
+    if (board[row][col] !== 'empty') return false; // Must be empty (cannot be 'wall')
 
     const opponent: PlayerColor = player === 'black' ? 'white' : 'black';
 
@@ -64,10 +77,12 @@ export function isValidMove(
         let hasOpponentBetween = false;
 
         while (x >= 0 && x < BOARD_SIZE && y >= 0 && y < BOARD_SIZE) {
-            if (board[x][y] === 'empty') break;
-            if (board[x][y] === opponent) {
+            const cell = board[x][y];
+            if (cell === 'empty' || cell === 'wall') break; // Break on empty or wall
+
+            if (cell === opponent) {
                 hasOpponentBetween = true;
-            } else if (board[x][y] === player) {
+            } else if (cell === player) {
                 if (hasOpponentBetween) return true;
                 break;
             }
@@ -100,10 +115,12 @@ export function makeMove(
         let y = col + dy;
 
         while (x >= 0 && x < BOARD_SIZE && y >= 0 && y < BOARD_SIZE) {
-            if (newBoard[x][y] === 'empty') break;
-            if (newBoard[x][y] === opponent) {
+            const cell = newBoard[x][y];
+            if (cell === 'empty' || cell === 'wall') break; // Break on empty or wall
+
+            if (cell === opponent) {
                 toFlip.push({ row: x, col: y });
-            } else if (newBoard[x][y] === player) {
+            } else if (cell === player) {
                 // Flip all pieces in between
                 toFlip.forEach(pos => {
                     newBoard[pos.row][pos.col] = player;

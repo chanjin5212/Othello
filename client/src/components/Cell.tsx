@@ -20,8 +20,15 @@ export function Cell({ state, position, isValidMove, onCellClick, isMyTurn }: Ce
             className="w-full h-full flex items-center justify-center cursor-pointer"
             onClick={handleClick}
         >
+            {/* Wall (Obstacle) */}
+            {state === 'wall' && (
+                <div className="w-full h-full p-1">
+                    <div className="w-full h-full bg-stone-800/90 rounded-md border border-stone-600 shadow-inner bg-gradient-to-br from-stone-700 to-stone-900" />
+                </div>
+            )}
+
             {/* Othello Piece (3D Effect) */}
-            {state !== 'empty' && (
+            {(state === 'black' || state === 'white') && (
                 <div
                     className={`
                         w-[85%] h-[85%] rounded-full shadow-lg transition-transform duration-300 transform scale-100 ease-out

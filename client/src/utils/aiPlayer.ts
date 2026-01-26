@@ -44,10 +44,12 @@ function isValidMoveAI(
         let hasOpponentBetween = false;
 
         while (x >= 0 && x < BOARD_SIZE && y >= 0 && y < BOARD_SIZE) {
-            if (board[x][y] === 'empty') break;
-            if (board[x][y] === opponent) {
+            const cell = board[x][y];
+            if (cell === 'empty' || cell === 'wall') break; // Break on empty or wall
+
+            if (cell === opponent) {
                 hasOpponentBetween = true;
-            } else if (board[x][y] === player) {
+            } else if (cell === player) {
                 if (hasOpponentBetween) return true;
                 break;
             }
@@ -76,10 +78,12 @@ function makeMoveSimulate(board: CellState[][], row: number, col: number, player
         let y = col + dy;
 
         while (x >= 0 && x < BOARD_SIZE && y >= 0 && y < BOARD_SIZE) {
-            if (newBoard[x][y] === 'empty') break;
-            if (newBoard[x][y] === opponent) {
+            const cell = newBoard[x][y];
+            if (cell === 'empty' || cell === 'wall') break; // Break on empty or wall
+
+            if (cell === opponent) {
                 toFlip.push({ row: x, col: y });
-            } else if (newBoard[x][y] === player) {
+            } else if (cell === player) {
                 toFlip.forEach(pos => {
                     newBoard[pos.row][pos.col] = player;
                 });

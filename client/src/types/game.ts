@@ -1,5 +1,5 @@
 // Game types (matching server types)
-export type CellState = 'empty' | 'black' | 'white';
+export type CellState = 'empty' | 'black' | 'white' | 'wall';
 export type PlayerColor = 'black' | 'white';
 export type RoomStatus = 'waiting' | 'ready' | 'playing' | 'finished';
 

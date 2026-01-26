@@ -118,6 +118,18 @@ function App() {
     initialBoard[4][3] = 'black';
     initialBoard[4][4] = 'white';
 
+    // Place 5 random walls (AI Mode)
+    let wallsPlaced = 0;
+    while (wallsPlaced < 5) {
+      const r = Math.floor(Math.random() * 8);
+      const c = Math.floor(Math.random() * 8);
+
+      if (initialBoard[r][c] === 'empty') {
+        initialBoard[r][c] = 'wall';
+        wallsPlaced++;
+      }
+    }
+
     setGameState({
       board: initialBoard,
       currentTurn: 'black',
@@ -184,7 +196,7 @@ function App() {
       const toFlip: Position[] = [];
       let x = row + dx; let y = col + dy;
       while (x >= 0 && x < 8 && y >= 0 && y < 8) {
-        if (newBoard[x][y] === 'empty') break;
+        if (newBoard[x][y] === 'empty' || newBoard[x][y] === 'wall') break;
         if (newBoard[x][y] === opponentColor) toFlip.push({ row: x, col: y });
         else if (newBoard[x][y] === playerColor) {
           toFlip.forEach(pos => newBoard[pos.row][pos.col] = playerColor);
